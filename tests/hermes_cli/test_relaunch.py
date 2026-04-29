@@ -1,7 +1,6 @@
 """Tests for hermes_cli.relaunch — unified self-relaunch utility."""
 
 import sys
-from unittest.mock import patch
 
 import pytest
 
