@@ -1,0 +1,342 @@
+{
+  "timestamp": "2026-04-12T01:49:51",
+  "project": "hermes-agent",
+  "version": "0.8.0",
+  "organization": "Nous Research",
+  "language": "Python 3.11+",
+  "license": "MIT",
+  "root_claude_md": "CLAUDE.md",
+  "modules": [
+    {
+      "name": "agent",
+      "path": "agent/",
+      "claude_md": "agent/CLAUDE.md",
+      "description": "Core agent internals: prompt assembly, context compression, memory, model routing, display",
+      "entry_files": ["agent/__init__.py"],
+      "key_files": [
+        "agent/prompt_builder.py",
+        "agent/context_compressor.py",
+        "agent/auxiliary_client.py",
+        "agent/model_metadata.py",
+        "agent/memory_provider.py",
+        "agent/memory_manager.py",
+        "agent/smart_model_routing.py",
+        "agent/display.py"
+      ],
+      "test_dir": "tests/agent/",
+      "test_count": 39,
+      "interfaces": [],
+      "dependencies": ["hermes_constants", "openai", "anthropic"],
+      "coverage": {
+        "scanned": true,
+        "entry_read": true,
+        "interfaces_read": true,
+        "tests_found": true,
+        "data_model_found": true
+      },
+      "gaps": []
+    },
+    {
+      "name": "tools",
+      "path": "tools/",
+      "claude_md": "tools/CLAUDE.md",
+      "description": "40+ tool implementations with central registry, terminal environments, browser providers",
+      "entry_files": ["tools/registry.py"],
+      "key_files": [
+        "tools/registry.py",
+        "tools/terminal_tool.py",
+        "tools/file_tools.py",
+        "tools/web_tools.py",
+        "tools/browser_tool.py",
+        "tools/mcp_tool.py",
+        "tools/delegate_tool.py"
+      ],
+      "test_dir": "tests/tools/",
+      "test_count": 90,
+      "interfaces": ["registry.register()", "registry.dispatch()"],
+      "dependencies": ["model_tools", "toolsets"],
+      "sub_modules": [
+        "tools/environments/",
+        "tools/browser_providers/"
+      ],
+      "coverage": {
+        "scanned": true,
+        "entry_read": true,
+        "interfaces_read": true,
+        "tests_found": true,
+        "data_model_found": false
+      },
+      "gaps": ["No database data model (tool results are JSON strings)"]
+    },
+    {
+      "name": "gateway",
+      "path": "gateway/",
+      "claude_md": "gateway/CLAUDE.md",
+      "description": "Multi-platform messaging gateway: 17 platform adapters, session management, delivery",
+      "entry_files": ["gateway/run.py"],
+      "key_files": [
+        "gateway/run.py",
+        "gateway/session.py",
+        "gateway/delivery.py",
+        "gateway/platforms/base.py",
+        "gateway/platforms/telegram.py",
+        "gateway/platforms/discord.py",
+        "gateway/platforms/slack.py"
+      ],
+      "test_dir": "tests/gateway/",
+      "test_count": 80,
+      "interfaces": ["GatewayRunner", "base.py PlatformAdapter ABC"],
+      "dependencies": ["run_agent", "hermes_cli.commands"],
+      "sub_modules": [
+        "gateway/platforms/",
+        "gateway/builtin_hooks/"
+      ],
+      "coverage": {
+        "scanned": true,
+        "entry_read": true,
+        "interfaces_read": true,
+        "tests_found": true,
+        "data_model_found": true
+      },
+      "gaps": []
+    },
+    {
+      "name": "hermes_cli",
+      "path": "hermes_cli/",
+      "claude_md": "hermes_cli/CLAUDE.md",
+      "description": "CLI subcommands: setup, model, tools, gateway, profiles, skins, auth, skills hub",
+      "entry_files": ["hermes_cli/main.py"],
+      "key_files": [
+        "hermes_cli/main.py",
+        "hermes_cli/config.py",
+        "hermes_cli/commands.py",
+        "hermes_cli/setup.py",
+        "hermes_cli/models.py",
+        "hermes_cli/skin_engine.py",
+        "hermes_cli/auth.py"
+      ],
+      "test_dir": "tests/hermes_cli/",
+      "test_count": 80,
+      "interfaces": ["hermes_cli.main:main"],
+      "dependencies": ["argparse", "curses", "prompt_toolkit", "rich"],
+      "coverage": {
+        "scanned": true,
+        "entry_read": true,
+        "interfaces_read": true,
+        "tests_found": true,
+        "data_model_found": false
+      },
+      "gaps": []
+    },
+    {
+      "name": "acp_adapter",
+      "path": "acp_adapter/",
+      "claude_md": "acp_adapter/CLAUDE.md",
+      "description": "Agent Client Protocol server for editor integration (VS Code, Zed, JetBrains)",
+      "entry_files": ["acp_adapter/entry.py"],
+      "key_files": [
+        "acp_adapter/entry.py",
+        "acp_adapter/server.py",
+        "acp_adapter/session.py",
+        "acp_adapter/tools.py"
+      ],
+      "test_dir": "tests/acp/",
+      "test_count": 9,
+      "interfaces": ["acp_adapter.entry:main"],
+      "dependencies": ["agent-client-protocol"],
+      "coverage": {
+        "scanned": true,
+        "entry_read": true,
+        "interfaces_read": true,
+        "tests_found": true,
+        "data_model_found": false
+      },
+      "gaps": []
+    },
+    {
+      "name": "cron",
+      "path": "cron/",
+      "claude_md": "cron/CLAUDE.md",
+      "description": "Built-in cron scheduler with platform delivery",
+      "entry_files": ["cron/scheduler.py"],
+      "key_files": [
+        "cron/scheduler.py",
+        "cron/jobs.py"
+      ],
+      "test_dir": "tests/cron/",
+      "test_count": 6,
+      "interfaces": ["scheduler.tick()"],
+      "dependencies": ["croniter", "hermes_cli.config"],
+      "coverage": {
+        "scanned": true,
+        "entry_read": true,
+        "interfaces_read": true,
+        "tests_found": true,
+        "data_model_found": false
+      },
+      "gaps": []
+    },
+    {
+      "name": "environments",
+      "path": "environments/",
+      "claude_md": "environments/CLAUDE.md",
+      "description": "RL training environments (Atropos), benchmarks, 11 tool call parsers",
+      "entry_files": ["environments/agent_loop.py"],
+      "key_files": [
+        "environments/agent_loop.py",
+        "environments/hermes_base_env.py",
+        "environments/tool_call_parsers/__init__.py"
+      ],
+      "test_dir": "tests/environments/",
+      "test_count": 1,
+      "interfaces": ["HermesAgentLoop"],
+      "dependencies": ["model_tools", "tools.terminal_tool", "atroposlib"],
+      "sub_modules": [
+        "environments/benchmarks/",
+        "environments/tool_call_parsers/",
+        "environments/hermes_swe_env/"
+      ],
+      "coverage": {
+        "scanned": true,
+        "entry_read": true,
+        "interfaces_read": true,
+        "tests_found": true,
+        "data_model_found": false
+      },
+      "gaps": ["Limited test coverage for RL environments"]
+    },
+    {
+      "name": "plugins",
+      "path": "plugins/",
+      "claude_md": "plugins/CLAUDE.md",
+      "description": "Plugin system: 7 memory providers (Honcho, Mem0, Holographic, etc.)",
+      "entry_files": ["plugins/__init__.py"],
+      "key_files": [
+        "plugins/memory/__init__.py",
+        "plugins/memory/honcho/__init__.py",
+        "plugins/memory/holographic/__init__.py"
+      ],
+      "test_dir": "tests/agent/",
+      "test_count": 2,
+      "interfaces": ["discover_memory_providers()", "load_memory_provider()"],
+      "dependencies": ["agent.memory_provider"],
+      "sub_modules": [
+        "plugins/memory/",
+        "plugins/context_engine/"
+      ],
+      "coverage": {
+        "scanned": true,
+        "entry_read": true,
+        "interfaces_read": true,
+        "tests_found": true,
+        "data_model_found": true
+      },
+      "gaps": []
+    },
+    {
+      "name": "skills",
+      "path": "skills/",
+      "claude_md": null,
+      "description": "Built-in skills: apple, autonomous-ai-agents, creative, devops, mlops, red-teaming, etc.",
+      "entry_files": [],
+      "key_files": [],
+      "test_dir": null,
+      "test_count": 0,
+      "interfaces": [],
+      "dependencies": [],
+      "coverage": {
+        "scanned": true,
+        "entry_read": false,
+        "interfaces_read": false,
+        "tests_found": false,
+        "data_model_found": false
+      },
+      "gaps": ["Large skill directory, content-only (SKILL.md files), no module CLAUDE.md generated"]
+    },
+    {
+      "name": "optional-skills",
+      "path": "optional-skills/",
+      "claude_md": null,
+      "description": "Optional/community skills: blockchain, mlops tools, productivity, security, etc.",
+      "entry_files": [],
+      "key_files": [],
+      "test_dir": null,
+      "test_count": 0,
+      "interfaces": [],
+      "dependencies": [],
+      "coverage": {
+        "scanned": true,
+        "entry_read": false,
+        "interfaces_read": false,
+        "tests_found": false,
+        "data_model_found": false
+      },
+      "gaps": ["Content-only directory, no module CLAUDE.md needed"]
+    }
+  ],
+  "root_level_files": {
+    "run_agent.py": "AIAgent class - core conversation loop",
+    "cli.py": "HermesCLI class - interactive CLI orchestrator",
+    "model_tools.py": "Tool orchestration layer",
+    "toolsets.py": "Toolset definitions and resolution",
+    "batch_runner.py": "Parallel batch processing with checkpointing",
+    "hermes_constants.py": "Shared constants (get_hermes_home, etc.)",
+    "hermes_state.py": "SessionDB - SQLite session store with FTS5",
+    "hermes_time.py": "Time utilities",
+    "hermes_logging.py": "Logging configuration",
+    "hermes_state.py": "Session state management",
+    "utils.py": "General utilities",
+    "trajectory_compressor.py": "Trajectory compression for RL",
+    "toolset_distributions.py": "Toolset distribution configs",
+    "rl_cli.py": "RL CLI interface"
+  },
+  "scan_coverage": {
+    "estimated_total_py_files": 250,
+    "scanned_py_files": 180,
+    "coverage_percent": 72,
+    "estimated_total_test_files": 250,
+    "scanned_test_files": 250,
+    "test_coverage_percent": 100,
+    "total_modules": 10,
+    "modules_with_claude_md": 8,
+    "modules_fully_covered": 6,
+    "modules_partially_covered": 4
+  },
+  "ignored": {
+    "directories": [
+      ".git",
+      "node_modules",
+      "venv",
+      ".venv",
+      "__pycache__",
+      "dist",
+      "build",
+      "data",
+      "logs",
+      "wandb",
+      ".direnv",
+      ".worktrees",
+      "ignored",
+      "mini-swe-agent",
+      "browser-use",
+      "agent-browser"
+    ],
+    "patterns": [
+      "*.pyc",
+      "*.lock",
+      "*.egg-info",
+      "*.pack",
+      "*.idx",
+      "*.rev"
+    ],
+    "reason": "Matched .gitignore rules or default binary/generated artifact patterns"
+  },
+  "truncated": false,
+  "next_steps": [
+    "Deep scan tools/environments/ backends (docker.py, modal.py, ssh.py) for interface details",
+    "Review skills/ directory structure for skill catalog completeness",
+    "Scan website/ docs for architecture diagrams and cross-references",
+    "Review gateway/platforms/ adapters beyond telegram/discord/slack for completeness",
+    "Scan root-level utils.py, hermes_time.py, trajectory_compressor.py for shared utilities"
+  ]
+}
